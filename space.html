@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ name }} - Space{% endblock %}
+
+{% block head %}
+<style>
+    .space-header {
+        text-align: center;
+        margin: 30px 0;
+    }
+    .space-title {
+        font-size: 2.5rem;
+        color: #0a1f44;
+        font-weight: 600;
+    }
+    .space-container {
+        display: flex;
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .notes-sidebar {
+        width: 300px;
+        background: #c8f7c5;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .notes-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+    .note-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
+    .note-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .note-link {
+        flex-grow: 1;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+    }
+    .delete-btn {
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .delete-btn:hover {
+        background: #ff5252;
+        transform: scale(1.1);
+    }
+    .add-note-form {
+        margin-top: 30px;
+        margin-right: 20px;
+    }
+    .note-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    .add-btn {
+        background: #ffd6e0;
+        color: #333;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+    .add-btn:hover {
+        background: #3a7bc8;
+        transform: translateY(-2px);
+    }
+    .note-editor {
+        flex: 1;
+        background-color: #fffdf0;
+        border: 2px dashed #c2b280;
+        padding: 30px;
+        border-radius: 8px;
+        position: relative;
+    }
+    .note-title {
+        font-size: 1.5rem;
+        border-bottom: 1px dashed #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .note-content {
+        width: 100%;
+        border: none;
+        background: transparent;
+        resize: none;
+        font-size: 16px;
+        min-height: 400px;
+        line-height: 1.6;
+    }
+    .save-btn {
+        background: #4a90e2;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 20px;
+    }
+    .save-btn:hover {
+        background: #3a7bc8;
+        transform: translateY(-2px);
+    }
+    .editor-decoration {
+        position: absolute;
+        top: 20px;
+        left: -10px;
+    }
+    .decoration-dot {
+        width: 15px;
+        height: 15px;
+        background-color: #666;
+        border-radius: 50%;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-header">
+    <h1 class="space-title">{{ name }} Space</h1>
+</div>
+
+<div class="space-container">
+    <div class="notes-sidebar">
+        <h3>Your Notes</h3>
+        <ul class="notes-list">
+            {% for note in notes %}
+            <li class="note-item">
+                <a href="{{ url_for('main.space_note', name=name, note_id=note['_id']) }}" class="note-link">{{ note['title'] }}</a>
+                <form method="POST" action="{{ url_for('main.delete_note', name=name, note_id=note['_id']) }}" style="display:inline;">
+                    <button type="submit" class="delete-btn" title="Delete Note">🗑️</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <div class="add-note-form">
+            <form method="POST" action="{{ url_for('main.add_note', name=name) }}">
+                <input type="text" name="title" placeholder="New Note" required class="note-input">
+                <button type="submit" class="add-btn">+ Add New Note</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="note-editor">
+        {% if selected_note %}
+        <form method="POST" action="{{ url_for('main.save_note', name=name, note_id=selected_note['_id']) }}">
+            <div class="editor-decoration">
+                <div class="decoration-dot"></div>
+                <div class="decoration-dot"></div>
+            </div>
+            <h3 class="note-title" contenteditable="true">{{ selected_note.title }}</h3>
+            <textarea name="content" class="note-content">{{ selected_note.content }}</textarea>
+            <button type="submit" class="save-btn">Save Changes</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

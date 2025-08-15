@@ -1,0 +1,24 @@
+{% extends 'list.html' %}
+{% block title %}Edit Task{% endblock %}
+{% block content %}
+<div class="list-container">
+<h2>Edit Task</h2>
+<form action="{{ url_for('main.edit_task', task_id=task._id) }}" method="POST">
+   <div class="form-grid">
+       <div>
+           <input type="text" name="title" value="{{ task.title }}" required>
+       </div>
+       <div>
+           <input type="text" name="space" value="{{ task.space }}" placeholder="Space (e.g., Work)">
+       </div>
+       <div>
+           <input type="date" name="due_date" value="{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}">
+       </div>
+       <div>
+           <button type="submit">Update Task</button>
+           <a href="{{ url_for('main.list_page') }}">Cancel</a>
+       </div>
+   </div>
+</form>
+</div>
+{% endblock %}

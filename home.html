@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+{% block head %}
+<style>
+    .main-content {
+        
+        text-align: center;
+    }
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 0.2em;
+        padding-top: 80px;
+    }
+    p.tagline {
+        font-size: 1.2em;
+        margin-bottom: 2em;
+        color: #444;
+        
+    }
+    #datetime {
+        font-size: 1.5em;
+        margin-top: 2em;
+        font-weight: bold;
+        color: #333;
+        padding-top: 80px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="datetime"></div>
+    <script src="{{ url_for('static', filename='js/datetime.js') }}"></script>
+    <h1>Hey, Hafsa!</h1>
+    <p class="tagline">Turn your dreams into plans and your plans into slay!</p>
+{% endblock %}

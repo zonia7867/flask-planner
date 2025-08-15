@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Board{% endblock %}
+
+{% block head %}
+<style>
+    .board-container {
+        display: flex;
+        gap: 30px;
+        padding: 25px;
+        margin-top:20px 0;
+        color: #333;
+    }
+    .stage-column {
+        flex:1;
+        min-width:280px;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .stage-title {
+        text-align: center;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid rgba(255,255,255,0.2);
+    }
+    .task-card {
+        padding: 12px;
+        margin: 12 px 0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .task-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 px 12px rgba(0,0,0,0.15);
+    }
+    .task-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .task-space {
+        font-size: 0.8em;
+        opacity: 0.8;
+    }
+    .stage-select {
+        width: 100%;
+        margin-top: 10px;
+        padding: 6px;
+        border-radius: 5px;
+        border:1px solid #ccc;
+        background-color: rgba(255, 255,255, 0.1);
+        color: rgb(19, 13, 13);
+    }
+    .todo-stage {
+        background-color: #b8d8f8;
+    }
+    .todo-stage .stage-title {
+        color: #2a5885;
+    }
+    .todo-stage .task-card {
+        background-color: #d4e6fa;
+        border-left: 4px solid #4a90e2;
+    }
+    
+    .progress-stage {
+        background-color: #c8f7c5; 
+    }
+    .progress-stage .stage-title {
+        color: #2e7d32;
+    }
+    .progress-stage .task-card {
+        background-color: #e0f7e0;
+        border-left: 4px solid #66bb6a;
+    }
+    .done-stage {
+        background-color: #ffd6e0; /* Pastel pink */
+    }
+    .done-stage .stage-title {
+        color: #c2185b;
+    }
+    .done-stage .task-card {
+        background-color: #ffe5ec;
+        border-left: 4px solid #f06292;
+    }
+    
+    .empty-stage {
+        color: #666;
+        text-align: center;
+        padding: 10px;
+    }
+    h2 {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Kanban Board</h2>
+<div class="board-container">
+    {% for stage, tasks in stages.items() %}
+        <div class="stage-column {% if stage == 'To Do' %}todo-stage{%elif stage == 'In Progress' %}progress-stage{% else %}done-stage{% endif %}">
+            <h3 class=""stage-title>{{ stage }}</h3>
+            {% for task in tasks %}
+                <div class="task-card">
+                    <div class="task-title">{{ task.title }}</div>
+                    <div class="task-space">{{ task.space }}</div>
+                    <form action="{{ url_for('main.update_task_stage', task_id=task._id) }}" method="POST" style="margin-top: 8px;">
+                        <select name="stage" onchange="this.form.submit()" class="stage-select">
+                            <option value="To Do" {% if task.stage == 'To Do' %}selected{% endif %}>To Do</option>
+                            <option value="In Progress" {% if task.stage == 'In Progress' %}selected{% endif %}>In Progress</option>
+                            <option value="Done" {% if task.stage == 'Done' %}selected{% endif %}>Done</option>
+                        </select>
+                    </form>
+                </div>
+            {% else %}
+                <p class="empty-stage">No tasks</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
